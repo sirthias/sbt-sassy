@@ -1,10 +1,11 @@
 name := "sbt-sass"
-organization := "org.madoushi.sbt"
-version := "2.0.0"
+organization := "io.bullet.sbt"
+version := "0.5.0"
+licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
 sbtPlugin := true
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.8"
 scalacOptions ++= Seq(
   "-unchecked",
   "-Xlint",
@@ -14,19 +15,19 @@ scalacOptions ++= Seq(
   "-encoding", "UTF-8"
 )
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-web" % "1.4.3")
+addSbtPlugin("com.typesafe.sbt" % "sbt-web" % "1.4.4")
 
-libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.7" withJavadoc()
+libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.8.1" withJavadoc()
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 
 // Publishing options
 // ==================
-bintrayOrganization := Option("madoushi")
+bintrayOrganization := Option("bullet")
 bintrayPackageLabels := Seq("sbt", "sbt-plugin", "sass")
 bintrayReleaseOnPublish in ThisBuild := false
 bintrayRepository := "sbt-plugins"
 publishMavenStyle := false
-licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
+
 publish := (publish dependsOn (test in Test)).value
 
