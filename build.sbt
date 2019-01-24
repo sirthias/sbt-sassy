@@ -17,9 +17,10 @@ scalacOptions ++= Seq(
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-web" % "1.4.4")
 
-libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.8.1" withJavadoc()
-
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+libraryDependencies ++= Seq(
+  "io.spray"            %%  "spray-json"    % "1.3.5",
+  "org.scalatest"       %%  "scalatest"     % "3.0.5" % "test"
+)
 
 // Publishing options
 // ==================
