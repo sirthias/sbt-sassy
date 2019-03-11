@@ -1,6 +1,6 @@
-name := "sbt-sass"
+name := "sbt-sassy"
 organization := "io.bullet.sbt"
-version := "0.5.0"
+version := "0.5.1"
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
 sbtPlugin := true
@@ -19,7 +19,7 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-web" % "1.4.4")
 
 libraryDependencies ++= Seq(
   "io.spray"            %%  "spray-json"    % "1.3.5",
-  "org.scalatest"       %%  "scalatest"     % "3.0.5" % "test"
+  "org.scalatest"       %%  "scalatest"     % "3.0.6" % "test"
 )
 
 // Publishing options

@@ -54,25 +54,30 @@ object SbtSass extends AutoPlugin {
           IO.createDirectory(targetDir)
 
           val (allCssFiles, newlyWrittenCssFiles) =
-            incremental.syncIncremental(cacheDir / "run", sources) { modifiedSources =>
-              log.info(s"Sass compiling ${modifiedSources.size} source(s)")
-              val compilationResults = modifiedSources.map { source =>
-                val target = targetDir / (source.base + "css")
-                Try(SassCompiler.compile(source, target, loadPath, command, options)).toEither.left.map { e =>
-                  log.error(s"Error during Sass compilation of [$source]: $e")
-                  source
+            incremental.syncIncremental(cacheDir / "run", sources) {
+              case Nil => Map.empty[File, OpResult] -> Nil
+              case modifiedSources =>
+                log.info(s"Sass compiling ${modifiedSources.size} source(s) to $targetDir ...")
+                log.debug(modifiedSources.mkString("  ", "  \n", ""))
+
+                val compilationResults = modifiedSources.map { source =>
+                  val relSourcePath = IO.relativize(sourceDir, source).get
+                  val target = new File(targetDir, relSourcePath.substring(0, relSourcePath lastIndexOf '.') + ".css")
+                  Try(SassCompiler.compile(source, target, loadPath, command, options)).toEither.left.map { e =>
+                    log.error(s"Error during Sass compilation of [$source]: $e")
+                    source
+                  }
                 }
-              }
-              val cssFiles = compilationResults.collect { case Right(result) => result.target }
-              val cacheMap = compilationResults.foldLeft(Map.empty[File, OpResult]) {
-                case (m, Right(x)) => m.updated(x.source, OpSuccess(x.filesRead, x.filesWritten))
-                case (m, Left(source)) => m.updated(source, OpFailure)
-              }
-              cacheMap -> cssFiles
+                val cssFiles = compilationResults.collect { case Right(result) => result.target }
+                val cacheMap = compilationResults.foldLeft(Map.empty[File, OpResult]) {
+                  case (m, Right(x)) => m.updated(x.source, OpSuccess(x.filesRead, x.filesWritten))
+                  case (m, Left(source)) => m.updated(source, OpFailure)
+                }
+                cacheMap -> cssFiles
             }
 
           if (newlyWrittenCssFiles.nonEmpty)
-            log.info(s"Sass compilation results:\n  ${newlyWrittenCssFiles.mkString("\n")}")
+            log.debug(s"Sass compilation results:\n  ${newlyWrittenCssFiles.mkString("\n")}")
 
           allCssFiles.toSeq
 

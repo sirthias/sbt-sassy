@@ -3,7 +3,7 @@ package io.bullet.sbt.sass
 import java.io.File
 
 import sbt.io.IO
-import spray.json.{JsArray, JsString}
+import spray.json.{JsArray, JsString, JsonParser}
 
 import scala.sys.process._
 
@@ -44,7 +44,7 @@ object SassCompiler {
       val relativeSourceMapUrl = java.net.URLDecoder.decode(encodedRelativeSourceMapUrl, "UTF8")
       val sourceMapFile = new File(output.getParentFile, relativeSourceMapUrl)
       val sourceMapJsonSource = IO.read(sourceMapFile)
-      val sourceMapJsonObj = spray.json.JsonParser(sourceMapJsonSource).asJsObject("Expected sourceMap to contain a JSON object")
+      val sourceMapJsonObj = JsonParser(sourceMapJsonSource).asJsObject("Expected sourceMap to contain a JSON object")
       sourceMapJsonObj.fields.get("sources") match {
         case None => fail("Expected sourceMap JSON to have a `sources` member")
         case Some(JsArray(elements)) =>

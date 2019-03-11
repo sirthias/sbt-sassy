@@ -45,7 +45,7 @@ class SassCompilerSpec extends FreeSpec with Matchers {
       IO.withTemporaryDirectory { dir =>
         val input = new File(getClass.getResource("/broken.scss").toURI)
         val error = the [SassCompiler.Error] thrownBy SassCompiler.compile(input, dir / "sbt-sassy-test.css", Nil)
-        error.getMessage should include("expected \"{\"")
+        error.getMessage should include("expected \"}\"")
       }
     }
   }
