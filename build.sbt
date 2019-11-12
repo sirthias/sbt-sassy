@@ -1,34 +1,66 @@
-name := "sbt-sassy"
-organization := "io.bullet.sbt"
-version := "0.5.1"
-licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
+enablePlugins(AutomateHeaderPlugin)
+enablePlugins(GitVersioning)
 
+name := "sbt-sassy"
+organization := "io.bullet"
+homepage := Some(new URL("https://github.com/sirthias/sbt-sassy/"))
+description := "SBT plugin for Dart SASS"
+startYear := Some(2015)
+licenses := Seq("Apache 2" -> url("https://www.apache.org/licenses/LICENSE-2.0.html"))
+unmanagedResources in Compile += baseDirectory.value.getParentFile.getParentFile / "LICENSE"
+scmInfo := Some(ScmInfo(url("https://github.com/sirthias/sbt-sassy/"), "scm:git:git@github.com:sirthias/sbt-sassy.git"))
+
+scalaVersion := "2.12.10"
 sbtPlugin := true
 
-scalaVersion := "2.12.8"
+git.useGitDescribe := true
+
 scalacOptions ++= Seq(
-  "-unchecked",
-  "-Xlint",
   "-deprecation",
-  "-Xfatal-warnings",
+  "-encoding", "UTF-8",
   "-feature",
-  "-encoding", "UTF-8"
+  "-language:_",
+  "-unchecked",
+  "-target:jvm-1.8",
+  "-Xlint:_,-missing-interpolator",
+  "-Xfatal-warnings",
+  "-Ywarn-dead-code",
+  "-Ywarn-numeric-widen",
+  "-Ybackend-parallelism", "8",
+  "-Ywarn-unused:imports,-patvars,-privates,-locals,-implicits,-explicits",
+  "-Ycache-macro-class-loader:last-modified",
+  "-Yno-adapted-args",
+  "-Ywarn-inaccessible",
+  "-Ywarn-infer-any",
+  "-Ywarn-nullary-override",
+  "-Ywarn-nullary-unit",
+  "-Xfuture",
+  "-Xsource:2.13"
 )
+
+scalacOptions in (Compile, doc) += "-no-link-warnings"
+sourcesInBase := false
+
+// file headers
+headerLicense := Some(HeaderLicense.ALv2("2015-2019", "Jens Grassel, Mathias Doenitz"))
+
+// reformat main and test sources on compile
+scalafmtOnCompile := true
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-web" % "1.4.4")
 
+testFrameworks += new TestFramework("utest.runner.Framework")
+
 libraryDependencies ++= Seq(
-  "io.spray"            %%  "spray-json"    % "1.3.5",
-  "org.scalatest"       %%  "scalatest"     % "3.0.6" % "test"
+  "io.bullet"   %% "borer-core" % "1.1.0",
+  "com.lihaoyi" %% "utest"      % "0.7.1" % "test"
 )
 
-// Publishing options
-// ==================
-bintrayOrganization := Option("bullet")
-bintrayPackageLabels := Seq("sbt", "sbt-plugin", "sass")
-bintrayReleaseOnPublish in ThisBuild := false
-bintrayRepository := "sbt-plugins"
+// publishing
 publishMavenStyle := false
-
-publish := (publish dependsOn (test in Test)).value
-
+publishArtifact in (Compile, packageBin) := true
+publishArtifact in (Test, packageBin) := false
+publishArtifact in (Compile, packageDoc) := false
+publishArtifact in (Compile, packageSrc) := true
+bintrayRepository := "sbt-plugins"
+bintrayOrganization in bintray := None
